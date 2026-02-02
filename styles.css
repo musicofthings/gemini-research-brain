@@ -1,0 +1,416 @@
+/**
+ * Gemini Research Brain - Styles
+ * UI styling for settings, modals, and components
+ */
+
+/* ============================================
+   Settings Tab Styles
+   ============================================ */
+
+/* Tab Navigation */
+.grb-tab-container {
+    margin-top: 20px;
+}
+
+.grb-tab-nav {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid var(--background-modifier-border);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.grb-tab-btn {
+    padding: 8px 16px;
+    border: none;
+    background: var(--background-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.grb-tab-btn:hover {
+    background: var(--background-modifier-hover);
+}
+
+.grb-tab-btn.active {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+.grb-tab-content {
+    padding: 16px 0;
+}
+
+/* Cost Dashboard */
+.grb-cost-dashboard {
+    background: var(--background-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.grb-cost-dashboard h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 16px;
+}
+
+/* Progress Bar */
+.grb-progress-container {
+    margin-bottom: 16px;
+}
+
+.grb-progress-bar {
+    height: 8px;
+    background: var(--background-modifier-border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.grb-progress-fill {
+    height: 100%;
+    background: var(--interactive-accent);
+    transition: width 0.3s ease;
+}
+
+.grb-progress-fill.warning {
+    background: var(--text-warning);
+}
+
+.grb-progress-fill.danger {
+    background: var(--text-error);
+}
+
+/* Stats Grid */
+.grb-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
+}
+
+.grb-stat-card {
+    text-align: center;
+    padding: 12px;
+    background: var(--background-primary);
+    border-radius: 8px;
+}
+
+.grb-stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.grb-stat-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-normal);
+}
+
+.grb-stat-subtitle {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 2px;
+}
+
+/* Budget Warning */
+.grb-budget-warning {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: var(--background-modifier-error);
+    border-radius: 6px;
+    color: var(--text-error);
+    font-size: 14px;
+}
+
+/* About Section */
+.grb-about {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--background-secondary);
+    border-radius: 8px;
+}
+
+.grb-about p {
+    margin: 4px 0;
+}
+
+/* ============================================
+   Modal Styles
+   ============================================ */
+
+/* Insight Preview Modal */
+.grb-insight-modal {
+    padding: 20px;
+}
+
+.grb-modal-header {
+    margin-bottom: 16px;
+}
+
+.grb-modal-header h2 {
+    margin: 0 0 8px 0;
+}
+
+.grb-modal-stats {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.grb-modal-content {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 16px;
+    background: var(--background-secondary);
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.grb-preview-content {
+    line-height: 1.6;
+}
+
+.grb-edit-textarea {
+    width: 100%;
+    min-height: 300px;
+    padding: 12px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+    font-family: var(--font-monospace);
+    font-size: 14px;
+    resize: vertical;
+}
+
+.grb-grounding-section {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: var(--background-secondary);
+    border-radius: 8px;
+}
+
+.grb-grounding-section h4 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+}
+
+.grb-grounding-section ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.grb-grounding-section li {
+    margin: 4px 0;
+}
+
+.grb-grounding-section a {
+    color: var(--text-accent);
+    text-decoration: none;
+}
+
+.grb-grounding-section a:hover {
+    text-decoration: underline;
+}
+
+.grb-modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.grb-modal-buttons .setting-item {
+    border: none;
+    padding: 0;
+}
+
+.grb-modal-buttons .setting-item-control {
+    gap: 8px;
+}
+
+/* PHI Warning Modal */
+.grb-phi-modal {
+    padding: 20px;
+}
+
+.grb-phi-modal h2 {
+    color: var(--text-error);
+    margin-top: 0;
+}
+
+.grb-phi-warning-text {
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.grb-phi-report {
+    background: var(--background-secondary);
+    padding: 16px;
+    border-radius: 8px;
+    font-family: var(--font-monospace);
+    font-size: 13px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    margin-bottom: 16px;
+}
+
+.grb-phi-modal ol {
+    padding-left: 24px;
+}
+
+.grb-phi-modal li {
+    margin: 8px 0;
+}
+
+/* Budget Warning Modal */
+.grb-budget-modal {
+    padding: 20px;
+    text-align: center;
+}
+
+.grb-budget-modal h2 {
+    color: var(--text-warning);
+    margin-top: 0;
+}
+
+.grb-budget-warning-text {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.grb-budget-remaining {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-normal);
+    margin-bottom: 20px;
+}
+
+/* Loading Modal */
+.grb-loading-modal {
+    padding: 40px;
+    text-align: center;
+}
+
+.grb-loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.grb-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--background-modifier-border);
+    border-top-color: var(--interactive-accent);
+    border-radius: 50%;
+    animation: grb-spin 1s linear infinite;
+}
+
+@keyframes grb-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.grb-loading-message {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.grb-loading-tip {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+@media (max-width: 600px) {
+    .grb-tab-nav {
+        flex-direction: column;
+    }
+
+    .grb-tab-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .grb-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grb-modal-content {
+        max-height: 300px;
+    }
+
+    .grb-edit-textarea {
+        min-height: 200px;
+    }
+}
+
+/* ============================================
+   Dark Mode Adjustments
+   ============================================ */
+
+.theme-dark .grb-cost-dashboard {
+    background: var(--background-secondary-alt);
+}
+
+.theme-dark .grb-stat-card {
+    background: var(--background-primary-alt);
+}
+
+.theme-dark .grb-modal-content {
+    background: var(--background-secondary-alt);
+}
+
+.theme-dark .grb-phi-report {
+    background: var(--background-primary-alt);
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.grb-hidden {
+    display: none !important;
+}
+
+.grb-text-center {
+    text-align: center;
+}
+
+.grb-text-muted {
+    color: var(--text-muted);
+}
+
+.grb-text-error {
+    color: var(--text-error);
+}
+
+.grb-text-warning {
+    color: var(--text-warning);
+}
+
+.grb-text-success {
+    color: var(--text-success);
+}
+
+.grb-mt-1 { margin-top: 4px; }
+.grb-mt-2 { margin-top: 8px; }
+.grb-mt-3 { margin-top: 16px; }
+.grb-mt-4 { margin-top: 24px; }
+
+.grb-mb-1 { margin-bottom: 4px; }
+.grb-mb-2 { margin-bottom: 8px; }
+.grb-mb-3 { margin-bottom: 16px; }
+.grb-mb-4 { margin-bottom: 24px; }

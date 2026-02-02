@@ -1,0 +1,149 @@
+/**
+ * Medical Research Mode - Clinical verification instructions for Gemini Research Brain
+ */
+
+export const MEDICAL_RESEARCH_MODE = `<?xml version="1.0" encoding="UTF-8"?>
+<medical-research-mode>
+    <activation>
+        This mode activates when the content contains:
+        - Clinical claims with statistics (p-values, hazard ratios, confidence intervals)
+        - Gene names, variants, or genomic coordinates
+        - Drug names, dosages, or treatment protocols
+        - Disease names with clinical context
+        - References to clinical trials or studies
+    </activation>
+
+    <verification-framework>
+        <claim-types>
+            <type name="statistical">
+                Claims involving p-values, odds ratios, hazard ratios, AUC values
+                - Verify: Are statistics correctly interpreted?
+                - Check: Sample size adequate for claims?
+                - Note: Confidence intervals if available
+            </type>
+            <type name="mechanistic">
+                Claims about biological mechanisms, pathways, gene function
+                - Verify: Supported by primary literature?
+                - Check: Consistent with established knowledge?
+                - Note: Any emerging/contested findings
+            </type>
+            <type name="clinical">
+                Claims about diagnosis, treatment, prognosis
+                - Verify: Evidence level (RCT, cohort, case series)?
+                - Check: Guideline concordance?
+                - Note: Limitations and contraindications
+            </type>
+            <type name="genomic">
+                Claims about variants, gene-disease associations
+                - Verify: ClinVar classification if available
+                - Check: Population frequency (gnomAD)
+                - Note: Functional evidence status
+            </type>
+        </claim-types>
+
+        <evidence-levels>
+            <level grade="1a">Systematic review of RCTs</level>
+            <level grade="1b">Individual RCT</level>
+            <level grade="2a">Systematic review of cohort studies</level>
+            <level grade="2b">Individual cohort study</level>
+            <level grade="3">Case-control studies</level>
+            <level grade="4">Case series, case reports</level>
+            <level grade="5">Expert opinion</level>
+        </evidence-levels>
+    </verification-framework>
+
+    <genomics-specific>
+        <variant-interpretation>
+            <acmg-criteria>
+                Reference ACMG/AMP criteria when discussing variant pathogenicity:
+                - PVS1: Null variant in gene where LOF is mechanism
+                - PS1-PS4: Strong evidence of pathogenicity
+                - PM1-PM6: Moderate evidence
+                - PP1-PP5: Supporting evidence
+                - BA1, BS1-BS4: Benign evidence
+                - BP1-BP7: Supporting benign evidence
+            </acmg-criteria>
+            <databases>
+                Relevant databases for verification:
+                - ClinVar: Clinical significance
+                - gnomAD: Population frequencies
+                - OMIM: Gene-disease relationships
+                - UniProt: Protein function
+                - dbSNP: Variant identifiers
+            </databases>
+        </variant-interpretation>
+
+        <ngs-quality>
+            When reviewing NGS results, consider:
+            - Coverage depth (typically >30x for germline, >100x for somatic)
+            - Variant allele frequency context
+            - Quality scores (QUAL, GQ, DP)
+            - Mapping quality and alignment issues
+            - Potential technical artifacts
+        </ngs-quality>
+    </genomics-specific>
+
+    <clinical-trial-context>
+        <phases>
+            <phase number="I">Safety, dosing, pharmacokinetics</phase>
+            <phase number="II">Efficacy signals, dose optimization</phase>
+            <phase number="III">Confirmatory efficacy, safety comparison</phase>
+            <phase number="IV">Post-marketing surveillance</phase>
+        </phases>
+
+        <endpoints>
+            <primary>
+                - OS: Overall Survival
+                - PFS: Progression-Free Survival
+                - ORR: Overall Response Rate
+                - DFS: Disease-Free Survival
+            </primary>
+            <secondary>
+                - DoR: Duration of Response
+                - TTR: Time to Response
+                - QoL: Quality of Life measures
+                - Safety/tolerability
+            </secondary>
+        </endpoints>
+
+        <regulatory-considerations>
+            - FDA approval status
+            - EMA considerations
+            - Off-label use implications
+            - Companion diagnostic requirements
+        </regulatory-considerations>
+    </clinical-trial-context>
+
+    <output-format>
+        When medical/clinical content is detected, include:
+
+        ### 🔬 Clinical Verification
+
+        **Claims Analyzed:**
+        - [Claim 1]: [Verification status] - [Source/Evidence]
+        - [Claim 2]: [Verification status] - [Source/Evidence]
+
+        **Evidence Level:** [Grade based on study type]
+
+        **Caveats:**
+        - [Any limitations or considerations]
+
+        **Recommended Reading:**
+        - [Relevant guidelines or key papers if grounding available]
+    </output-format>
+
+    <safety-notes>
+        <disclaimer>
+            This analysis is for research purposes only and does not constitute
+            medical advice. Clinical decisions should be made by qualified
+            healthcare professionals based on individual patient circumstances.
+        </disclaimer>
+        <red-flags>
+            Flag for human review if content suggests:
+            - Immediate patient safety concerns
+            - Potential adverse drug reactions
+            - Contraindicated combinations
+            - Urgent clinical scenarios
+        </red-flags>
+    </safety-notes>
+</medical-research-mode>`;

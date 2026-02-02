@@ -1,0 +1,10 @@
+{
+  "id": "gemini-research-brain",
+  "name": "Gemini Research Brain",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "AI-powered research journaling with Gemini 3 Pro, PubMed integration, and clinical verification",
+  "author": "Shibi",
+  "authorUrl": "https://github.com/yourusername",
+  "isDesktopOnly": false
+}
