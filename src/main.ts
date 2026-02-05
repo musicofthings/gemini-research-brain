@@ -383,7 +383,7 @@ export default class GeminiResearchBrainPlugin extends Plugin {
      * Show cost report
      */
     private showCostReport(): void {
-        const report = this.costTracker.generateReport();
+        const report = this.costTracker.generateReport(this.settings.model);
         new Notice(report, 10000);
     }
 
