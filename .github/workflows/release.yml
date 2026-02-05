@@ -1,43 +1,35 @@
-name: Release Obsidian Plugin
+name: Release Obsidian plugin
 
 on:
-  release:
-    types: [published]
-
-permissions:
-  contents: write
+  push:
+    tags:
+      - "*"
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
+          node-version: "18.x"
 
       - name: Build plugin
-        run: npm run build
-
-      - name: Create release assets
         run: |
-          mkdir -p dist
-          cp main.js manifest.json styles.css dist/
-          cd dist
-          zip -r gemini-research-brain.zip main.js manifest.json styles.css
+          npm install
+          npm run build
 
-      - name: Upload release assets
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            dist/main.js
-            dist/manifest.json
-            dist/styles.css
-            dist/gemini-research-brain.zip
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+
+          gh release create "$tag" \
+            --title="$tag" \
+            --draft \
+            main.js manifest.json styles.css
