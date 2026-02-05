@@ -54,8 +54,6 @@ export default class GeminiResearchBrainPlugin extends Plugin {
     }
 
     async onload(): Promise<void> {
-        console.log('Loading Gemini Research Brain plugin...');
-
         // Load settings
         await this.loadSettings();
 
@@ -94,11 +92,9 @@ export default class GeminiResearchBrainPlugin extends Plugin {
             await this.generateInsightForActiveNote();
         });
 
-        console.log('Gemini Research Brain plugin loaded successfully.');
     }
 
     onunload(): void {
-        console.log('Unloading Gemini Research Brain plugin...');
     }
 
     /**
@@ -175,7 +171,11 @@ export default class GeminiResearchBrainPlugin extends Plugin {
     /**
      * Main insight generation logic
      */
-    private async generateInsight(editor: Editor, view: MarkdownView): Promise<void> {
+    private async generateInsight(
+        editor: Editor,
+        view: MarkdownView,
+        skipBudgetWarning: boolean = false
+    ): Promise<void> {
         const content = editor.getValue();
 
         if (!content.trim()) {
@@ -191,6 +191,21 @@ export default class GeminiResearchBrainPlugin extends Plugin {
                 100,
                 stats.remaining,
                 () => {},
+                () => {}
+            ).open();
+            return;
+        }
+
+        const budgetPercentage = this.costTracker.getBudgetUsagePercentage();
+        if (!skipBudgetWarning && budgetPercentage >= this.settings.budgetAlertThreshold && budgetPercentage < 100) {
+            const stats = this.costTracker.getFormattedStats();
+            new BudgetWarningModal(
+                this.app,
+                budgetPercentage,
+                stats.remaining,
+                () => {
+                    this.generateInsight(editor, view, true);
+                },
                 () => {}
             ).open();
             return;
@@ -259,7 +274,11 @@ export default class GeminiResearchBrainPlugin extends Plugin {
     /**
      * Generate insight for selected text
      */
-    private async generateInsightForSelection(editor: Editor, view: MarkdownView): Promise<void> {
+    private async generateInsightForSelection(
+        editor: Editor,
+        view: MarkdownView,
+        skipBudgetWarning: boolean = false
+    ): Promise<void> {
         const selection = editor.getSelection();
 
         if (!selection.trim()) {
@@ -275,6 +294,21 @@ export default class GeminiResearchBrainPlugin extends Plugin {
                 100,
                 stats.remaining,
                 () => {},
+                () => {}
+            ).open();
+            return;
+        }
+
+        const budgetPercentage = this.costTracker.getBudgetUsagePercentage();
+        if (!skipBudgetWarning && budgetPercentage >= this.settings.budgetAlertThreshold && budgetPercentage < 100) {
+            const stats = this.costTracker.getFormattedStats();
+            new BudgetWarningModal(
+                this.app,
+                budgetPercentage,
+                stats.remaining,
+                () => {
+                    this.generateInsightForSelection(editor, view, true);
+                },
                 () => {}
             ).open();
             return;
@@ -349,7 +383,7 @@ export default class GeminiResearchBrainPlugin extends Plugin {
      * Show cost report
      */
     private showCostReport(): void {
-        const report = this.costTracker.generateReport();
+        const report = this.costTracker.generateReport(this.settings.model);
         new Notice(report, 10000);
     }
 

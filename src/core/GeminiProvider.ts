@@ -599,7 +599,7 @@ export class GeminiProvider {
 
             const response = await this.callGeminiAPI(request, false);
 
-            if (response.candidates?.[0]?.content?.parts?.[0]?.text) {
+            if (this.extractCandidateText(response)) {
                 return { success: true, message: '✅ API connection successful!' };
             }
 
@@ -607,5 +607,23 @@ export class GeminiProvider {
         } catch (error) {
             return { success: false, message: `❌ ${(error as Error).message}` };
         }
+    }
+
+    private extractCandidateText(response: GeminiResponse): string | null {
+        const candidate = response.candidates?.[0];
+        if (!candidate?.content?.parts) {
+            return null;
+        }
+
+        const textParts = candidate.content.parts
+            .filter(part => part.text)
+            .map(part => part.text?.trim())
+            .filter((text): text is string => Boolean(text));
+
+        if (textParts.length === 0) {
+            return null;
+        }
+
+        return textParts.join('\n');
     }
 }

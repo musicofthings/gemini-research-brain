@@ -62,7 +62,6 @@ export class CostTracker {
         const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
         if (this.stats.currentMonth !== currentMonth) {
-            console.log(`Month rollover: ${this.stats.currentMonth} → ${currentMonth}`);
             this.stats = this.createFreshStats();
             this.saveStats();
         }
@@ -229,14 +228,13 @@ export class CostTracker {
     /**
      * Get detailed token breakdown
      */
-    public getTokenBreakdown(): {
+    public getTokenBreakdown(model: GeminiModel): {
         input: { tokens: number; cost: string };
         output: { tokens: number; cost: string };
         thinking: { tokens: number; cost: string };
         total: { tokens: number; cost: string };
     } {
-        // Using default model pricing for display
-        const pricing = GEMINI_PRICING['gemini-2.0-flash'];
+        const pricing = GEMINI_PRICING[model];
 
         const inputCost = (this.stats.inputTokens / 1_000_000) * pricing.inputPerMillion;
         const outputCost = (this.stats.outputTokens / 1_000_000) * pricing.outputPerMillion;
@@ -273,9 +271,9 @@ export class CostTracker {
     /**
      * Generate a budget report string
      */
-    public generateReport(): string {
+    public generateReport(model: GeminiModel): string {
         const stats = this.getFormattedStats();
-        const breakdown = this.getTokenBreakdown();
+        const breakdown = this.getTokenBreakdown(model);
 
         const lines = [
             '📊 Gemini Research Brain - Cost Report',
