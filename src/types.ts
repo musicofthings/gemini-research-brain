@@ -42,7 +42,7 @@ export interface GeminiResearchBrainSettings {
 
 export const DEFAULT_SETTINGS: GeminiResearchBrainSettings = {
     apiKey: '',
-    model: 'gemini-2.0-flash',
+    model: 'gemini-3-pro-preview',
     thinkingLevel: 'low',
     autoDetectThinkingLevel: true,
     temperature: 1.0,
@@ -71,7 +71,10 @@ export const DEFAULT_SETTINGS: GeminiResearchBrainSettings = {
 // Gemini API Types
 // ============================================================================
 
-export type GeminiModel = 'gemini-2.0-flash' | 'gemini-2.0-flash-thinking-exp';
+export type GeminiModel =
+    | 'gemini-3-pro-preview'
+    | 'gemini-2.0-flash'
+    | 'gemini-2.0-flash-thinking-exp';
 
 export type ThinkingLevel = 'low' | 'high';
 
@@ -200,6 +203,12 @@ export interface TokenPricing {
 }
 
 export const GEMINI_PRICING: Record<GeminiModel, TokenPricing> = {
+    // TODO: Replace placeholder pricing with official Gemini 3 Pro rates.
+    'gemini-3-pro-preview': {
+        inputPerMillion: 0.10,
+        outputPerMillion: 0.40,
+        thinkingPerMillion: 0.40,
+    },
     'gemini-2.0-flash': {
         inputPerMillion: 0.10,
         outputPerMillion: 0.40,

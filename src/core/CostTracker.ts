@@ -62,7 +62,6 @@ export class CostTracker {
         const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
         if (this.stats.currentMonth !== currentMonth) {
-            console.log(`Month rollover: ${this.stats.currentMonth} → ${currentMonth}`);
             this.stats = this.createFreshStats();
             this.saveStats();
         }
@@ -236,7 +235,7 @@ export class CostTracker {
         total: { tokens: number; cost: string };
     } {
         // Using default model pricing for display
-        const pricing = GEMINI_PRICING['gemini-2.0-flash'];
+        const pricing = GEMINI_PRICING['gemini-3-pro-preview'];
 
         const inputCost = (this.stats.inputTokens / 1_000_000) * pricing.inputPerMillion;
         const outputCost = (this.stats.outputTokens / 1_000_000) * pricing.outputPerMillion;
