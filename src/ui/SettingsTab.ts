@@ -164,8 +164,9 @@ export class GeminiResearchBrainSettingsTab extends PluginSettingTab {
             .setDesc('Select the Gemini model to use')
             .addDropdown(dropdown => dropdown
                 .addOption('gemini-3-pro-preview', 'Gemini 3 Pro Preview')
-                .addOption('gemini-2.0-flash', 'Gemini 2.0 Flash')
-                .addOption('gemini-2.0-flash-thinking-exp', 'Gemini 2.0 Flash Thinking (Experimental)')
+                .addOption('gemini-3-flash-preview', 'Gemini 3 Flash Preview')
+                .addOption('gemini-flash-latest', 'Gemini Flash (Latest)')
+                .addOption('gemini-flash-lite-latest', 'Gemini Flash Lite (Latest)')
                 .setValue(this.plugin.settings.model)
                 .onChange(async (value: GeminiModel) => {
                     this.plugin.settings.model = value;

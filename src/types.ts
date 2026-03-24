@@ -73,8 +73,9 @@ export const DEFAULT_SETTINGS: GeminiResearchBrainSettings = {
 
 export type GeminiModel =
     | 'gemini-3-pro-preview'
-    | 'gemini-2.0-flash'
-    | 'gemini-2.0-flash-thinking-exp';
+    | 'gemini-3-flash-preview'
+    | 'gemini-flash-latest'
+    | 'gemini-flash-lite-latest';
 
 export type ThinkingLevel = 'low' | 'high';
 
@@ -209,12 +210,17 @@ export const GEMINI_PRICING: Record<GeminiModel, TokenPricing> = {
         outputPerMillion: 0.40,
         thinkingPerMillion: 0.40,
     },
-    'gemini-2.0-flash': {
+    'gemini-3-flash-preview': {
         inputPerMillion: 0.10,
         outputPerMillion: 0.40,
         thinkingPerMillion: 0.40,
     },
-    'gemini-2.0-flash-thinking-exp': {
+    'gemini-flash-latest': {
+        inputPerMillion: 0.10,
+        outputPerMillion: 0.40,
+        thinkingPerMillion: 0.40,
+    },
+    'gemini-flash-lite-latest': {
         inputPerMillion: 0.10,
         outputPerMillion: 0.40,
         thinkingPerMillion: 0.40,
