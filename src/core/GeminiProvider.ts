@@ -268,8 +268,8 @@ export class GeminiProvider {
 
                 // Handle model not found (404)
                 if (lastError.message.includes('404')) {
-                    if (model.startsWith('gemini-3.0')) {
-                        model = 'gemini-2.0-flash';
+                    if (model.startsWith('gemini-3-pro')) {
+                        model = 'gemini-flash-latest';
                         endpoint = `${API_BASE_URL}/${model}:generateContent?key=${this.settings.apiKey}`;
                         continue;
                     }
