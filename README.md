@@ -1,203 +1,109 @@
-# 🧬 Gemini Research Brain - Complete Project Package
+# 🧠 Gemini Research Brain
 
-AI-powered research journaling for physician-scientists working with genomics, clinical trials, and bioinformatics.
-
----
-
-## 📦 What's in This Package
-
-This is a **complete, production-ready** Obsidian plugin project with:
-
-✅ **Full Development Documentation**
-- `AGENTS.md` - Comprehensive guide for AI coding agents (Claude Code, Cursor, Windsurf)
-- `CLAUDE.md` - Architectural decisions and design rationale
-- `IMPLEMENTATION_NOTES.md` - Guide to copying full implementations from conversation
-- `SETUP.md` - Quick start instructions
-
-✅ **Project Structure**
-- Complete directory structure (src/, prompts/, tests/, docs/)
-- Configuration files (package.json, tsconfig.json, manifest.json)
-- Build scripts (esbuild.config.mjs, version-bump.mjs)
-- Git setup (.gitignore, LICENSE)
-
-✅ **Reference Implementations**
-All TypeScript code provided in the conversation above:
-- Core services (GeminiProvider, SanitizerEngine, CostTracker, PubMedConnector)
-- UI components (SettingsTab, InsightModal, CostDashboard)
-- System prompts (3 XML files for Gemini instructions)
-- Complete test structure
+AI-powered research journaling for physician-scientists and clinical researchers.
 
 ---
 
-## 🚀 Quick Start (For Developers)
+## ✅ Core Features
 
-### Option 1: Manual Setup
-```bash
-# 1. Extract this package
-cd gemini-research-brain-complete
-
-# 2. Install dependencies
-npm install
-
-# 3. Copy TypeScript implementations from conversation
-# (See IMPLEMENTATION_NOTES.md for file list)
-
-# 4. Build
-npm run build
-
-# 5. Copy to Obsidian vault
-cp -r . /path/to/vault/.obsidian/plugins/gemini-research-brain/
-
-# 6. Reload Obsidian
-```
-
-### Option 2: Using Claude Code (Recommended)
-```bash
-# 1. Open this folder in Claude Code
-claude-code gemini-research-brain-complete/
-
-# 2. Tell Claude: "Read AGENTS.md and implement Phase 1"
-# Claude will create all files following the comprehensive guide
-
-# 3. Claude will build and test automatically
-
-# 4. Deploy to your vault when ready
-```
+- Voice-to-text dictation with a ribbon mic button and hotkey
+- Research insights with Inverted Pyramid summaries
+- PHI/PII detection with review workflow, auto-anonymize, and ignore override
+- Cost tracking and budget enforcement
+- Google Search grounding, PubMed integration, and code audit (optional)
+- Configurable cognitive algorithms before analysis
 
 ---
 
-## 📚 Documentation Guide
+## 🚀 Install (Obsidian)
 
-### For AI Coding Agents
-**Start here:** `AGENTS.md`
-- Complete development instructions
-- Phase-by-phase implementation guide
-- Testing checklists
-- Debugging guide
-- Security requirements
+Copy these files/folders into your vault at .obsidian/plugins/gemini-research-brain:
 
-**Then read:** `CLAUDE.md`
-- Why each decision was made
-- Trade-offs and alternatives considered
-- User context and requirements
-- Future roadmap
+- [main.js](main.js)
+- [manifest.json](manifest.json)
+- [styles.css](styles.css)
+- [README.md](README.md)
+- [prompts/](prompts/)
 
-### For Human Developers
-**Start here:** `SETUP.md`
-- Prerequisites and installation
-- Development workflow
-- Testing instructions
-
-**Then read:** `IMPLEMENTATION_NOTES.md`
-- File-by-file implementation guide
-- Build order recommendations
-- Reference to conversation sections
+Then reload Obsidian and enable the plugin.
 
 ---
 
-## 🎯 Key Features
+## 🎤 Voice Dictation
 
-### Phase 1: Foundation (Core Value)
-- **Inverted Pyramid Analysis** - 3-sentence executive summaries
-- **PHI/PII Sanitizer** - HIPAA-compliant content filtering
-- **Cost Tracking** - Real-time budget monitoring ($100/month)
-- **Gemini API Integration** - Smart thinking level auto-detection
+- Use the ribbon mic button to start/stop dictation.
+- Default hotkey: Mod + Shift + D
+- The transcript is inserted at the cursor in the active note.
 
-### Phase 2: Research Intelligence
-- **Google Search Grounding** - Real-time clinical claim verification
-- **PubMed Integration** - Automatic literature context
-- **Code Auditor** - Review Nextflow/Python/Bash/R pipelines
+**Requirement:** Enable the Google Cloud Speech-to-Text API in the same project as your API key.
 
-### Phase 3: Cognitive Frameworks
-- **Frame Analysis** - Detect cognitive biases
-- **Vault Connector** - Suggest related notes
-- **5-Whys Analysis** - Root cause investigation
-- **Shadow Prompt** - Surface omissions
+Tip: Change the hotkey in Settings → Hotkeys → Start/Stop Voice Dictation.
 
 ---
 
-## 🏗️ Architecture Highlights
+## 🧠 Research Insight Workflow
 
-### Design Principles
-1. **Cloud-Native** - All AI processing via Gemini API
-2. **Safety-First** - PHI detection blocks processing
-3. **Cost-Conscious** - Auto-detect complexity, enforce budgets
-4. **Mobile-Ready** - Works on iOS and Android Obsidian apps
-5. **Progressive Enhancement** - Phase 1 → 2 → 3 rollout
+Click the brain ribbon icon to open a pre-analysis modal:
 
-### Tech Stack
-- **TypeScript** - Type-safe plugin development
-- **Gemini 3 Pro** - AI reasoning with thinking mode
-- **PubMed MCP** - Structured literature search
-- **Obsidian API** - Native plugin integration
-- **esbuild** - Fast compilation and watch mode
+1. Select a cognitive algorithm (dropdown)
+2. Click Submit
+3. The analysis runs and inserts output according to your selection
+
+The output format includes a 3-sentence Inverted Pyramid summary:
+
+- Lead (main insight)
+- Body (context)
+- Tail (implications)
 
 ---
 
-## 📋 File Structure
+## 🧪 PHI/PII Review Tools
 
-```
-gemini-research-brain-complete/
-├── 📖 Documentation
-│   ├── AGENTS.md              ⭐ Complete AI agent guide (READ FIRST)
-│   ├── CLAUDE.md              ⭐ Architectural decisions
-│   ├── SETUP.md               Quick start guide
-│   ├── IMPLEMENTATION_NOTES.md File-by-file reference
-│   └── README.md              This file
-│
-├── 🔧 Configuration
-│   ├── package.json           npm dependencies
-│   ├── tsconfig.json          TypeScript config
-│   ├── manifest.json          Obsidian plugin metadata
-│   ├── esbuild.config.mjs     Build configuration
-│   ├── version-bump.mjs       Version management
-│   ├── .gitignore             Git ignore rules
-│   └── LICENSE                MIT License
-│
-├── 📁 Source Code (to be created)
-│   ├── src/
-│   │   ├── main.ts            Plugin entry point
-│   │   ├── types.ts           TypeScript interfaces
-│   │   ├── core/              Core services (4 files)
-│   │   ├── modules/           Feature modules (6 files)
-│   │   ├── ui/                UI components (3 files)
-│   │   └── utils/             Utilities (2 files)
-│   │
-│   ├── prompts/               System prompts (3 XML files)
-│   ├── tests/                 Test structure
-│   ├── docs/                  Additional documentation
-│   └── styles.css             UI styling
-│
-└── versions.json              Version history
-```
+If PHI/PII is detected, the plugin blocks processing and opens a review modal.
+
+You can:
+- Use arrow keys to jump between detected phrases
+- Edit content directly in the note
+- Submit to re-check
+- Auto-anonymize to redact all detected phrases
+- Ignore to proceed without blocking
 
 ---
 
-## 💰 Cost Management
+## 🔧 Models Supported
 
-### Expected Costs
-| User Type | Entries/Week | Monthly Cost |
-|-----------|--------------|--------------|
-| Light     | 5-10         | $5-15        |
-| Regular   | 20-30        | $25-50       |
-| Heavy     | 50+          | $50-100      |
-
-### Budget Features
-- Real-time token tracking
-- Monthly auto-reset
-- Alert at 80% threshold
-- Hard stop at 100%
-- Cost dashboard in settings
+- Gemini 3.0 Pro
+- Gemini 3.0 Flash
+- Gemini 2.0 Pro
+- Gemini 2.0 Flash
+- Gemini 2.0 Flash Thinking (Experimental)
+- Gemini 1.5 Pro
+- Gemini 1.5 Flash
 
 ---
 
-## 🔒 Privacy & Security
+## ⚙️ Settings Overview
 
-### HIPAA Compliance
-✅ PHI sanitizer blocks patient identifiers
-✅ No logging of user content
-✅ API keys encrypted by Obsidian
-✅ Optional Obsidian Sync for backups
+- API key, model selection, temperature, max output tokens
+- Feature toggles and module controls
+- Cost tracking and budget limits
+- Backup folder configuration
+- Voice dictation enable/disable
+
+---
+
+## 🛟 Troubleshooting
+
+- CORS errors: all API calls use Obsidian requestUrl
+- Rate limit exceeded: wait a few minutes and retry
+- Hotkey not detected: reload Obsidian and ensure the editor is focused
+- PHI false positives: use Ignore or Auto-anonymize, or edit and Submit
+
+---
+
+## 📜 License
+
+MIT
 ✅ No data retention except user's notes
 
 ### Security Audits
@@ -375,3 +281,53 @@ If you're a researcher looking to **use** this plugin:
 **Built with ❤️ for researchers who code and developers who research.**
 
 **Ready to build? Open `AGENTS.md` and start with Phase 1! 🧬**
+
+---
+
+# Gemini Research Brain Plugin
+
+## Overview
+Gemini Research Brain is an Obsidian plugin for physician-scientists and clinical researchers. It enables:
+- **Voice-to-text dictation** for daily journaling (create new notes or add to existing ones)
+- **AI-powered research insights** (executive summaries, clinical verification, code audit, and more)
+
+## Features
+- 🎤 **Dictation**: Record your voice, transcribe using Gemini API, and insert text into notes
+- 🧠 **Research Insights**: Summarize entries, verify claims, audit code, and more
+- 🔒 **PHI/PII Sanitizer**: HIPAA-compliant content filtering
+- 💸 **Cost Tracking**: Monitor Gemini API usage and budget
+- 🔗 **PubMed & Google Search**: Clinical claim verification
+
+## Getting Started
+1. **Install the plugin**
+   - Copy `main.js`, `manifest.json`, `styles.css`, and the `prompts/` folder to your vault’s `.obsidian/plugins/gemini-research-brain/` directory.
+2. **Enable the plugin** in Obsidian settings (Community Plugins).
+3. **Configure your Gemini API key** in the plugin settings tab.
+
+## Using Voice Dictation
+- Open the plugin’s command palette or settings tab.
+- Click **Start Dictation** to begin recording.
+- Click **Stop Dictation** to end recording and transcribe.
+- The transcribed text will be inserted into your daily note or a selected note.
+
+## Using Research Insights
+- Add or select a journal entry in your note.
+- Use the **Generate Research Insight** command.
+- The plugin will summarize your entry and add Lead, Context, and Implications.
+
+## Troubleshooting
+- **Rate limit errors**: Wait a few minutes and try again. Check your Gemini API quota.
+- **PHI detected**: Remove patient identifiers before submitting.
+- **Debug mode**: Enable in Advanced Settings to see logs in the Developer Console.
+
+## Dependencies
+- Uses Gemini API for both dictation and insights
+- May use [Willow](https://github.com/willow-voice/willow) or [Wispr Flow](https://github.com/wispr-ai/wispr-flow) for advanced audio capture (optional)
+
+## Roadmap
+- Mobile compatibility
+- Cloud backup (Google Drive)
+- More cognitive modules
+
+## License
+MIT

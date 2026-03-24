@@ -30,7 +30,13 @@ export class BackupManager {
     private async ensureBackupFolder(): Promise<void> {
         const folder = this.app.vault.getAbstractFileByPath(this.backupFolder);
         if (!folder) {
-            await this.app.vault.createFolder(this.backupFolder);
+            try {
+                await this.app.vault.createFolder(this.backupFolder);
+            } catch (err) {
+                if (!(err && err.message && err.message.includes('already exists'))) {
+                    throw err;
+                }
+            }
         }
     }
 
@@ -42,7 +48,17 @@ export class BackupManager {
 
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const backupSubfolder = `${this.backupFolder}/backup-${timestamp}`;
-        await this.app.vault.createFolder(backupSubfolder);
+        let subfolderExists = this.app.vault.getAbstractFileByPath(backupSubfolder);
+        if (!subfolderExists) {
+            try {
+                await this.app.vault.createFolder(backupSubfolder);
+            } catch (err) {
+                // If error is "Folder already exists", ignore
+                if (!(err && err.message && err.message.includes('already exists'))) {
+                    throw err;
+                }
+            }
+        }
 
         const files = this.app.vault.getMarkdownFiles();
         const insightFiles: BackupFile[] = [];
@@ -96,7 +112,12 @@ export class BackupManager {
 
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const sanitizedPath = notePath.replace(/\//g, '_').replace('.md', '');
-        const backupPath = `${this.backupFolder}/${sanitizedPath}_${timestamp}.md`;
+        let backupPath = `${this.backupFolder}/${sanitizedPath}_${timestamp}.md`;
+        let counter = 1;
+        while (this.app.vault.getAbstractFileByPath(backupPath)) {
+            backupPath = `${this.backupFolder}/${sanitizedPath}_${timestamp}_${counter}.md`;
+            counter += 1;
+        }
 
         const backupContent = [
             `# Backup: ${notePath}`,

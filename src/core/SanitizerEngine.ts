@@ -205,6 +205,25 @@ export class SanitizerEngine {
     }
 
     /**
+     * Auto-anonymize text by redacting detected PHI/PII
+     */
+    public anonymizeText(text: string, violations?: PHIViolation[]): string {
+        const list = violations && violations.length > 0 ? violations : this.scan(text).violations;
+        if (list.length === 0) {
+            return text;
+        }
+
+        // Replace from end to start to preserve indices
+        const sorted = [...list].sort((a, b) => b.startIndex - a.startIndex);
+        let output = text;
+        for (const v of sorted) {
+            const replacement = `[REDACTED:${v.type}]`;
+            output = output.slice(0, v.startIndex) + replacement + output.slice(v.endIndex);
+        }
+        return output;
+    }
+
+    /**
      * Find ranges that should be excluded from PHI detection
      */
     private findExcludedRanges(text: string): Array<[number, number]> {

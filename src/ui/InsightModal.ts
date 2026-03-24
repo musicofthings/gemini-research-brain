@@ -6,7 +6,14 @@
  */
 
 import { App, Modal, Setting, MarkdownRenderer, Component } from 'obsidian';
-import { ResearchInsightResult } from '../types';
+import { ResearchInsightResult, ResearchInsightOptions } from '../types';
+
+export interface InsightAlgorithmOption {
+    id: string;
+    label: string;
+    description: string;
+    options: ResearchInsightOptions;
+}
 
 export class InsightModal extends Modal {
     private result: ResearchInsightResult;
@@ -135,16 +142,143 @@ export class InsightModal extends Modal {
 }
 
 /**
+ * Insight Config Modal - Select cognitive algorithm before analysis
+ */
+export class InsightConfigModal extends Modal {
+    private options: InsightAlgorithmOption[];
+    private onSubmit: (option: InsightAlgorithmOption) => Promise<void>;
+    private onCancel: () => void;
+    private selectedId: string;
+
+    constructor(
+        app: App,
+        options: InsightAlgorithmOption[],
+        onSubmit: (option: InsightAlgorithmOption) => Promise<void>,
+        onCancel: () => void
+    ) {
+        super(app);
+        this.options = options;
+        this.onSubmit = onSubmit;
+        this.onCancel = onCancel;
+        this.selectedId = options[0]?.id || '';
+    }
+
+    onOpen(): void {
+        const { contentEl } = this;
+        contentEl.empty();
+        contentEl.addClass('grb-insight-config-modal');
+
+        contentEl.createEl('h2', { text: '🧠 Select Cognitive Algorithm' });
+        contentEl.createEl('p', {
+            text: 'Choose the analysis mode to run for this note, then submit to start processing.',
+            cls: 'setting-item-description'
+        });
+
+        if (this.options.length === 0) {
+            contentEl.createEl('p', { text: 'No algorithms available. Enable modules in settings.', cls: 'grb-phi-warning-text' });
+            const buttonContainer = contentEl.createDiv({ cls: 'grb-modal-buttons' });
+            new Setting(buttonContainer)
+                .addButton(btn => btn
+                    .setButtonText('Close')
+                    .setCta()
+                    .onClick(() => {
+                        this.onCancel();
+                        this.close();
+                    })
+                );
+            return;
+        }
+
+        const descriptionEl = contentEl.createEl('div', { cls: 'grb-insight-config-desc' });
+        descriptionEl.setText(this.options[0].description);
+
+        new Setting(contentEl)
+            .setName('Analysis Mode')
+            .setDesc('Select a cognitive algorithm')
+            .addDropdown(dropdown => dropdown
+                .addOptions(this.options.reduce((acc, opt) => {
+                    acc[opt.id] = opt.label;
+                    return acc;
+                }, {} as Record<string, string>))
+                .setValue(this.selectedId)
+                .onChange(value => {
+                    this.selectedId = value;
+                    const selected = this.options.find(o => o.id === value);
+                    if (selected) {
+                        descriptionEl.setText(selected.description);
+                    }
+                })
+            );
+
+        const progressEl = contentEl.createEl('div', { cls: 'grb-insight-config-progress' });
+        progressEl.setText('Ready');
+
+        const buttonContainer = contentEl.createDiv({ cls: 'grb-modal-buttons' });
+        new Setting(buttonContainer)
+            .addButton(btn => btn
+                .setButtonText('Cancel')
+                .onClick(() => {
+                    this.onCancel();
+                    this.close();
+                })
+            )
+            .addButton(btn => btn
+                .setButtonText('Submit')
+                .setCta()
+                .onClick(async () => {
+                    const selected = this.options.find(o => o.id === this.selectedId);
+                    if (!selected) {
+                        progressEl.setText('Please select an option.');
+                        return;
+                    }
+                    btn.setDisabled(true);
+                    progressEl.setText('Submitting...');
+                    try {
+                        await this.onSubmit(selected);
+                        progressEl.setText('Submitted.');
+                        this.close();
+                    } catch (error) {
+                        progressEl.setText(`Error: ${(error as Error).message}`);
+                        btn.setDisabled(false);
+                    }
+                })
+            );
+    }
+
+    onClose(): void {
+        const { contentEl } = this;
+        contentEl.empty();
+    }
+}
+
+/**
  * PHI Warning Modal - Shows when PHI is detected
  */
 export class PHIWarningModal extends Modal {
+
     private report: string;
     private onDismiss: () => void;
+    private violations: any[];
+    private onIgnore: () => void;
+    private onAutoAnonymize: () => void;
+    private onNavigate: (direction: 'prev' | 'next') => void;
+    private onSubmit: () => void;
 
-    constructor(app: App, report: string, onDismiss: () => void) {
+    constructor(app: App, report: string, onDismiss: () => void, options?: {
+        violations?: any[],
+        onIgnore?: () => void,
+        onAutoAnonymize?: () => void,
+        onNavigate?: (direction: 'prev' | 'next') => void,
+        onSubmit?: () => void
+    }) {
         super(app);
         this.report = report;
         this.onDismiss = onDismiss;
+        this.violations = options?.violations || [];
+        this.onIgnore = options?.onIgnore || (() => {});
+        this.onAutoAnonymize = options?.onAutoAnonymize || (() => {});
+        this.onNavigate = options?.onNavigate || (() => {});
+        this.onSubmit = options?.onSubmit || (() => {});
     }
 
     onOpen(): void {
@@ -174,14 +308,36 @@ export class PHIWarningModal extends Modal {
         instructionList.createEl('li', { text: 'Remove or anonymize the identified information' });
         instructionList.createEl('li', { text: 'Try generating the insight again' });
 
-        // Dismiss button
+        // Navigation and action buttons
         const buttonContainer = contentEl.createDiv({ cls: 'grb-modal-buttons' });
         new Setting(buttonContainer)
             .addButton(btn => btn
-                .setButtonText('Understood')
+                .setButtonText('⬅️ Previous')
+                .onClick(() => this.onNavigate('prev'))
+            )
+            .addButton(btn => btn
+                .setButtonText('Next ➡️')
+                .onClick(() => this.onNavigate('next'))
+            )
+            .addButton(btn => btn
+                .setButtonText('Ignore')
+                .onClick(() => {
+                    this.onIgnore();
+                    this.close();
+                })
+            )
+            .addButton(btn => btn
+                .setButtonText('Auto Anonymize')
+                .onClick(() => {
+                    this.onAutoAnonymize();
+                    this.close();
+                })
+            )
+            .addButton(btn => btn
+                .setButtonText('Submit')
                 .setCta()
                 .onClick(() => {
-                    this.onDismiss();
+                    this.onSubmit();
                     this.close();
                 })
             );

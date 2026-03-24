@@ -36,6 +36,7 @@ export interface GeminiResearchBrainSettings {
     debugMode: boolean;
 
     // Backup Options
+    enableVoiceDictation: boolean;
     enableAutoBackup: boolean;
     backupLocation: string;
 }
@@ -56,8 +57,9 @@ export const DEFAULT_SETTINGS: GeminiResearchBrainSettings = {
     enableCodeAudit: true,
     enableFrameAnalysis: false,
     enableVaultConnector: false,
-    enableFiveWhys: false,
-    enableShadowPrompt: false,
+        enableShadowPrompt: false,
+        enableFiveWhys: false,
+        enableVoiceDictation: true,
 
     showPreviewModal: true,
     autoInsertOnMobile: false,
@@ -245,6 +247,8 @@ export interface ResearchInsightOptions {
     enableVaultConnector?: boolean;
     enableFiveWhys?: boolean;
     enableShadowPrompt?: boolean;
+    skipPhiCheck?: boolean;
+    skipBudgetWarning?: boolean;
 }
 
 export interface ResearchInsightResult {

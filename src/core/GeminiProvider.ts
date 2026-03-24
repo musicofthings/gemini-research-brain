@@ -188,6 +188,9 @@ export class GeminiProvider {
     ): string {
         let instruction = this.systemPrompt;
 
+        // Enforce markdown output and prevent XML responses
+        instruction += '\n\nIMPORTANT: The system instruction is provided in XML for structure. Do NOT output XML. Respond only in Markdown text.';
+
         // Add medical research mode if clinical content detected
         if (analysis.hasClinicalClaims || analysis.hasBiomedicalTerms) {
             instruction += '\n\n' + this.medicalPrompt;
@@ -216,8 +219,8 @@ export class GeminiProvider {
             throw new Error('🚫 Monthly budget exhausted. Processing disabled until next month.');
         }
 
-        const model = this.settings.model;
-        const endpoint = `${API_BASE_URL}/${model}:generateContent?key=${this.settings.apiKey}`;
+        let model = this.settings.model;
+        let endpoint = `${API_BASE_URL}/${model}:generateContent?key=${this.settings.apiKey}`;
 
         // Add grounding tool if enabled
         if (useGrounding && this.settings.enableGrounding) {
@@ -225,6 +228,9 @@ export class GeminiProvider {
         }
 
         let lastError: Error | null = null;
+        let requestToSend: GeminiRequest = JSON.parse(JSON.stringify(request));
+        let strippedTools = false;
+        let strippedThinking = false;
 
         for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
             try {
@@ -234,22 +240,60 @@ export class GeminiProvider {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(request),
+                    body: JSON.stringify(requestToSend),
                 });
 
                 if (response.status !== 200) {
                     const errorBody = response.json;
+                    const errorMessage = errorBody?.error?.message || response.text || 'Unknown error';
                     throw new Error(
-                        `Gemini API error (${response.status}): ${errorBody?.error?.message || 'Unknown error'}`
+                        `Gemini API error (${response.status}): ${errorMessage}`
                     );
                 }
 
                 return response.json as GeminiResponse;
             } catch (error) {
-                lastError = error as Error;
+                const err = error as any;
+                if (err?.status && err?.response) {
+                    const errorBody = err.response?.json;
+                    const errorMessage = errorBody?.error?.message || err.response?.text || err.message;
+                    lastError = new Error(`Gemini API error (${err.status}): ${errorMessage}`);
+                } else {
+                    lastError = error as Error;
+                }
 
                 if (this.settings.debugMode) {
-                    console.error(`Gemini API attempt ${attempt} failed:`, error);
+                    console.error(`Gemini API attempt ${attempt} failed:`, lastError);
+                }
+
+                // Handle model not found (404)
+                if (lastError.message.includes('404')) {
+                    if (model.startsWith('gemini-3.0')) {
+                        model = 'gemini-2.0-flash';
+                        endpoint = `${API_BASE_URL}/${model}:generateContent?key=${this.settings.apiKey}`;
+                        continue;
+                    }
+                    throw new Error('⚠️ Gemini API returned 404. This usually means the Generative Language API is not enabled for your project or the API key belongs to a different project. Verify the API is enabled and the key is from the same project, then try again.');
+                }
+
+                // Handle bad request (400) by stripping unsupported fields
+                if (lastError.message.includes('400')) {
+                    if (!strippedTools && requestToSend.tools) {
+                        strippedTools = true;
+                        const cloned = JSON.parse(JSON.stringify(requestToSend)) as GeminiRequest;
+                        delete cloned.tools;
+                        requestToSend = cloned;
+                        continue;
+                    }
+                    if (!strippedThinking && requestToSend.generationConfig?.thinkingConfig) {
+                        strippedThinking = true;
+                        const cloned = JSON.parse(JSON.stringify(requestToSend)) as GeminiRequest;
+                        if (cloned.generationConfig) {
+                            delete cloned.generationConfig.thinkingConfig;
+                        }
+                        requestToSend = cloned;
+                        continue;
+                    }
                 }
 
                 // Don't retry on authentication errors
@@ -295,8 +339,8 @@ export class GeminiProvider {
         // Step 1: Analyze content
         const analysis = this.analyzeContent(entry);
 
-        // Step 2: PHI Check - MUST block if PHI detected
-        if (analysis.containsPHI) {
+        // Step 2: PHI Check - MUST block if PHI detected (unless user overrides)
+        if (analysis.containsPHI && !options.skipPhiCheck) {
             const scanResult = this.sanitizer.scan(entry);
             const report = this.sanitizer.generateReport(scanResult);
             throw new Error(`🚫 PHI/PII Detected - Cannot Process\n\n${report}`);
@@ -371,10 +415,10 @@ export class GeminiProvider {
         parts.push('---\n');
 
         parts.push('Please provide:\n');
-        parts.push('1. **Inverted Pyramid Summary**: A 3-sentence summary with:');
-        parts.push('   - Lead: The single most important insight');
-        parts.push('   - Body: Supporting context');
-        parts.push('   - Tail: Implications or next steps\n');
+        parts.push('1. **Inverted Pyramid Summary** (required). Use this exact template:');
+        parts.push('   Lead: <single sentence>');
+        parts.push('   Body: <single sentence>');
+        parts.push('   Tail: <single sentence>\n');
 
         if (analysis.hasClinicalClaims && (options.enableGrounding ?? this.settings.enableGrounding)) {
             parts.push('2. **Grounding Verification**: Verify any clinical claims against current literature.\n');
@@ -399,6 +443,7 @@ export class GeminiProvider {
         }
 
         parts.push('\nFormat your response with clear section headers using markdown.');
+        parts.push('Do NOT output XML.');
 
         return parts.join('\n');
     }
@@ -452,9 +497,9 @@ export class GeminiProvider {
      */
     private parseInvertedPyramid(text: string): InvertedPyramidSummary {
         // Try to find structured summary
-        const leadMatch = text.match(/(?:Lead|Main Insight)[:\s]*(.+?)(?=\n|Body|$)/is);
-        const bodyMatch = text.match(/(?:Body|Context)[:\s]*(.+?)(?=\n|Tail|$)/is);
-        const tailMatch = text.match(/(?:Tail|Implications|Next Steps)[:\s]*(.+?)(?=\n|$)/is);
+        const leadMatch = text.match(/(?:Lead|Main Insight)\s*[:\-]\s*(.+?)(?=\n|Body|$)/is);
+        const bodyMatch = text.match(/(?:Body|Context)\s*[:\-]\s*(.+?)(?=\n|Tail|$)/is);
+        const tailMatch = text.match(/(?:Tail|Implications|Next Steps)\s*[:\-]\s*(.+?)(?=\n|$)/is);
 
         // Fallback: use first three sentences if no structure found
         if (!leadMatch && !bodyMatch && !tailMatch) {

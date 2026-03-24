@@ -209,6 +209,7 @@ export class GeminiResearchBrainSettingsTab extends PluginSettingTab {
     private renderFeaturesTab(containerEl: HTMLElement): void {
         containerEl.createEl('h3', { text: 'Feature Settings' });
 
+
         // Thinking Level
         new Setting(containerEl)
             .setName('Thinking Level')
@@ -231,6 +232,18 @@ export class GeminiResearchBrainSettingsTab extends PluginSettingTab {
                 .setValue(this.plugin.settings.autoDetectThinkingLevel)
                 .onChange(async (value) => {
                     this.plugin.settings.autoDetectThinkingLevel = value;
+                    await this.plugin.saveSettings();
+                })
+            );
+
+        // Voice Dictation Toggle
+        new Setting(containerEl)
+            .setName('🎤 Voice Dictation')
+            .setDesc('Enable or disable voice dictation features (mic button, transcription)')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.enableVoiceDictation)
+                .onChange(async (value) => {
+                    this.plugin.settings.enableVoiceDictation = value;
                     await this.plugin.saveSettings();
                 })
             );
